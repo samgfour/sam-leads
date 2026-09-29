@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+  <!-- Copyright (C) 2026 Sam (https://github.com/samgfour). See LICENSE. -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sam Leads</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 44 44%27%3E%3Crect width=%2744%27 height=%2744%27 rx=%2713%27 fill=%27%23161616%27/%3E%3Ccircle cx=%2722%27 cy=%2722%27 r=%278%27 fill=%27%23c46a2e%27/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f5f1e8;
+      --paper:#fbf8f1;
+      --ink:#161616;
+      --muted:#6c665d;
+      --line:rgba(22,22,22,.12);
+      --accent:#c46a2e;
+      --accent-2:#274c77;
+      --success:#2f6b43;
+      --warn:#a14d2b;
+      --danger:#962f2f;
+      --shadow:0 20px 60px rgba(30, 26, 18, .08);
+      --radius:22px;
+      --max:1380px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:"Space Grotesk", sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 10% 10%, rgba(196,106,46,.12), transparent 28%),
+        radial-gradient(circle at 90% 20%, rgba(39,76,119,.10), transparent 24%),
+        linear-gradient(180deg, #f8f4ec 0%, #f2ede4 100%);
+      min-height:100vh;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.18;
+      background-image:
+        linear-gradient(rgba(22,22,22,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(22,22,22,.04) 1px, transparent 1px);
+      background-size:24px 24px;
+      mask-image:linear-gradient(to bottom, rgba(0,0,0,.8), rgba(0,0,0,.35));
+    }
+
+    .app{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:24px;
+    }
+
+    .topbar{
+      display:grid;
+      gap:22px;
+      padding:6px 0 26px;
+      animation:fadeUp .8s ease both;
+    }
+
+    .topbar-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+
+    .logo{
+      display:inline-flex;
+      align-items:center;
+      gap:12px;
+      color:var(--ink);
+      text-decoration:none;
+    }
+
+    .logo-mark{width:44px; height:44px; flex:none}
+
+    .logo-word{
+      font-family:"Instrument Serif", serif;
+      font-size:clamp(1.9rem, 4vw, 2.5rem);
+      line-height:1;
+      letter-spacing:-.02em;
+    }
+
+    .today{
+      color:var(--muted);
+      font-size:.95rem;
+      text-align:right;
+    }
+
+    .stats-strip{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:12px;
+    }
+
+    .stat{
+      background:rgba(251,248,241,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.45);
+      box-shadow:var(--shadow);
+      border-radius:18px;
+      padding:16px;
+    }
+
+    .stat .label{
+      font-size:.75rem;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:var(--muted);
+      margin-bottom:10px;
+    }
+
+    .stat .value{
+      font-size:clamp(1.3rem, 2vw, 2rem);
+      font-weight:700;
+      line-height:1;
+    }
+
+    .dashboard{
+      display:grid;
+      grid-template-columns:420px minmax(0,1fr);
+      gap:22px;
+      align-items:start;
+    }
+
+    .panel{
+      background:rgba(251,248,241,.72);
+      backdrop-filter:blur(12px);
+      border:1px solid rgba(255,255,255,.5);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .panel-head{
+      padding:22px 22px 0;
+    }
+
+    .panel-head h2{
+      margin:0;
+      font-size:1.15rem;
+      letter-spacing:-.02em;
+    }
+
+    .panel-head p{
+      margin:8px 0 0;
+      color:var(--muted);
+      font-size:.95rem;
+      line-height:1.5;
+    }
+
+    .form-wrap{
+      padding:20px 22px 22px;
+    }
+
+    .form-grid{
+      display:grid;
+      gap:14px;
+    }
+
+    .field{
+      display:grid;
+      gap:8px;
+    }
+
+    .field.two{
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .field.three{
+      grid-template-columns:1fr 1fr 1fr;
+      gap:12px;
+    }
+
+    label{
+      font-size:.82rem;
+      text-transform:uppercase;
+      letter-spacing:.1em;
+      color:var(--muted);
+      font-weight:500;
+    }
+
+    input, select, textarea{
+      width:100%;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.62);
+      color:var(--ink);
+      border-radius:16px;
+      padding:14px;
+      font:inherit;
+      outline:none;
+      transition:border-color .2s ease, transform .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+
+    textarea{
+      min-height:110px;
+      resize:vertical;
+    }
+
+    input:focus, select:focus, textarea:focus{
+      border-color:rgba(196,106,46,.55);
+      box-shadow:0 0 0 5px rgba(196,106,46,.12);
+      background:#fff;
+      transform:translateY(-1px);
+    }
+
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      padding-top:6px;
+    }
+
+    button{
+      border:none;
+      cursor:pointer;
+      font:inherit;
+      border-radius:999px;
+      padding:13px 18px;
+      transition:transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease, opacity .18s ease;
+    }
+
+    button:hover{transform:translateY(-2px)}
+    button:active{transform:translateY(0) scale(.98)}
+    button:disabled{opacity:.55; cursor:not-allowed}
+
+    .btn-primary{
+      background:var(--ink);
+      color:#fff;
+      box-shadow:0 12px 24px rgba(22,22,22,.12);
+    }
+
+    .btn-primary:hover{
+      background:var(--accent);
+      box-shadow:0 14px 28px rgba(196,106,46,.22);
+    }
+
+    .btn-secondary{
+      background:transparent;
+      color:var(--ink);
+      border:1px solid var(--line);
+    }
+
+    .btn-secondary:hover{
+      background:rgba(255,255,255,.75);
+    }
+
+    .status{
+      margin-top:8px;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid rgba(22,22,22,.08);
+      background:rgba(255,255,255,.48);
+      color:var(--muted);
+      font-size:.92rem;
+      line-height:1.5;
+    }
+
+    .status.ok{color:var(--success)}
+    .status.error{color:var(--danger)}
+    .status.warn{color:var(--warn)}
+
+    .main-area{
+      display:grid;
+      gap:22px;
+    }
+
+    .toolbar{
+      padding:18px 22px 20px;
+      border-bottom:1px solid rgba(22,22,22,.08);
+      display:grid;
+      grid-template-columns:1.15fr .85fr .85fr auto;
+      gap:12px;
+      align-items:end;
+    }
+
+    .leads-wrap{
+      padding:0 0 8px;
+    }
+
+    .leads-head{
+      display:grid;
+      grid-template-columns: 1.35fr .82fr .82fr .92fr 1.2fr auto;
+      gap:14px;
+      padding:16px 22px 14px;
+      color:var(--muted);
+      font-size:.76rem;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      border-bottom:1px solid rgba(22,22,22,.08);
+    }
+
+    .lead-list{
+      display:grid;
+    }
+
+    .lead-row{
+      display:grid;
+      grid-template-columns: 1.35fr .82fr .82fr .92fr 1.2fr auto;
+      gap:14px;
+      align-items:start;
+      padding:18px 22px;
+      border-bottom:1px solid rgba(22,22,22,.07);
+      transition:background .2s ease;
+    }
+
+    .lead-row:hover{
+      background:rgba(255,255,255,.42);
+    }
+
+    .lead-primary{
+      display:grid;
+      gap:4px;
+    }
+
+    .lead-name{
+      font-weight:700;
+      font-size:1rem;
+      letter-spacing:-.02em;
+    }
+
+    .lead-company{
+      color:var(--muted);
+      font-size:.93rem;
+    }
+
+    .lead-notes{
+      color:var(--muted);
+      font-size:.92rem;
+      line-height:1.45;
+      max-height:4.3em;
+      overflow:hidden;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:.8rem;
+      font-weight:700;
+      width:max-content;
+      letter-spacing:.02em;
+      background:#eee;
+    }
+
+    .stage-new{background:rgba(39,76,119,.12); color:var(--accent-2)}
+    .stage-contacted{background:rgba(196,106,46,.14); color:var(--accent)}
+    .stage-proposal{background:rgba(95,74,152,.14); color:#5f4a98}
+    .stage-negotiation{background:rgba(161,77,43,.14); color:var(--warn)}
+    .stage-won{background:rgba(47,107,67,.14); color:var(--success)}
+    .stage-lost{background:rgba(110,102,93,.14); color:#625c54}
+
+    .date-chip{
+      font-weight:700;
+      font-size:.92rem;
+    }
+
+    .date-chip.overdue{color:#b03f20}
+    .date-chip.today{color:var(--accent)}
+    .date-chip.upcoming{color:var(--success)}
+    .date-chip.empty{color:var(--muted); font-weight:500}
+
+    .row-actions{
+      display:flex;
+      gap:8px;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+    }
+
+    .icon-btn{
+      padding:10px 12px;
+      border-radius:12px;
+      background:rgba(255,255,255,.7);
+      border:1px solid var(--line);
+      color:var(--ink);
+      font-size:.86rem;
+    }
+
+    .icon-btn:hover{
+      background:var(--ink);
+      color:#fff;
+    }
+
+    .empty-state{
+      padding:50px 22px 60px;
+      color:var(--muted);
+    }
+
+    .empty-state h3{
+      margin:0 0 10px;
+      font-family:"Instrument Serif", serif;
+      font-size:2rem;
+      color:var(--ink);
+      font-weight:400;
+    }
+
+    .agenda{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:22px;
+    }
+
+    .agenda-block{
+      padding:22px;
+    }
+
+    .agenda-block h3{
+      margin:0;
+      font-size:1.05rem;
+      letter-spacing:-.02em;
+    }
+
+    .agenda-block p{
+      margin:8px 0 18px;
+      color:var(--muted);
+      font-size:.94rem;
+    }
+
+    .mini-list{
+      display:grid;
+      gap:12px;
+    }
+
+    .mini-item{
+      padding:14px;
+      border:1px solid rgba(22,22,22,.08);
+      border-radius:16px;
+      background:rgba(255,255,255,.46);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .mini-item strong{
+      display:block;
+      font-size:.95rem;
+    }
+
+    .mini-item span{
+      display:block;
+      color:var(--muted);
+      font-size:.88rem;
+      margin-top:3px;
+    }
+
+    .tag{
+      font-size:.76rem;
+      padding:7px 10px;
+      border-radius:999px;
+      background:rgba(22,22,22,.06);
+      white-space:nowrap;
+      font-weight:700;
+    }
+
+    .foot{
+      padding:18px 6px 10px;
+      color:var(--muted);
+      font-size:.88rem;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .reveal{opacity:0; transform:translateY(20px)}
+    .reveal.visible{animation:fadeUp .65s ease forwards}
+
+    @keyframes fadeUp{
+      from{opacity:0; transform:translateY(18px)}
+      to{opacity:1; transform:translateY(0)}
+    }
+
+    @media (max-width:1120px){
+      .dashboard{grid-template-columns:1fr}
+    }
+
+    @media (max-width:840px){
+      .toolbar{grid-template-columns:1fr}
+      .leads-head{display:none}
+      .lead-row{grid-template-columns:1fr; gap:10px}
+      .agenda{grid-template-columns:1fr}
+      .field.two,.field.three{grid-template-columns:1fr}
+      .row-actions{justify-content:flex-start}
+    }
+
+    @media (max-width:560px){
+      .app{padding:16px}
+      .panel-head,.form-wrap,.agenda-block,.toolbar{padding-left:16px; padding-right:16px}
+      .lead-row,.empty-state{padding-left:16px; padding-right:16px}
+      .stats-strip{grid-template-columns:1fr 1fr}
+    }
+
+    .foot a{color:inherit; text-underline-offset:3px}
+    [hidden]{display:none !important}
+    :focus-visible{outline:2px solid var(--accent-2); outline-offset:2px}
+    .lead-row.enter{animation:fadeUp .45s ease both}
+    #authGate{max-width:520px; margin:0 auto 22px}
+
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{animation:none !important; transition:none !important; scroll-behavior:auto !important}
+      .reveal{opacity:1; transform:none}
+    }
+  </style>
+
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="topbar-row">
+        <a class="logo" href="./" aria-label="Sam Leads">
+          <svg class="logo-mark" viewBox="0 0 44 44" aria-hidden="true">
+            <rect width="44" height="44" rx="13" fill="#161616"/>
+            <path d="M33 22A11 11 0 1 1 31 16.5" fill="none" stroke="#fbf8f1" stroke-width="3" stroke-linecap="round"/>
+            <path d="M31.4 10.5L31 16.5L25.5 14.1" fill="none" stroke="#fbf8f1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="22" cy="22" r="3.4" fill="#c46a2e"/>
+          </svg>
+          <span class="logo-word">Sam Leads</span>
+        </a>
+        <div class="today" id="today"></div>
+      </div>
+
+      <div class="stats-strip" id="stats">
+        <div class="stat"><div class="label">Total Leads</div><div class="value" id="statTotal">0</div></div>
+        <div class="stat"><div class="label">Due Today</div><div class="value" id="statToday">0</div></div>
+        <div class="stat"><div class="label">Overdue</div><div class="value" id="statOverdue">0</div></div>
+        <div class="stat"><div class="label">Notifications</div><div class="value" id="statNotify">Off</div></div>
+      </div>
+    </header>
+
+    <section class="panel" id="authGate" hidden>
+      <div class="panel-head">
+        <h2>Sign in</h2>
+        <p>Enter your email and we will send you a sign-in link.</p>
+      </div>
+      <div class="form-wrap">
+        <form id="authForm" class="form-grid">
+          <div class="field">
+            <label for="authEmail">Email</label>
+            <input id="authEmail" type="email" autocomplete="email" required />
+          </div>
+          <div class="actions"><button type="submit" class="btn-primary">Send sign-in link</button></div>
+          <div class="status" id="authStatus" role="status" aria-live="polite"></div>
+        </form>
+      </div>
+    </section>
+
+    <main class="dashboard">
+      <section class="panel reveal">
+        <div class="panel-head">
+          <h2>Add or update a lead</h2>
+          <p>Saved leads sync to your Supabase database.</p>
+        </div>
+
+        <div class="form-wrap">
+          <form id="leadForm" class="form-grid">
+            <input type="hidden" id="leadId" />
+
+            <div class="field">
+              <label for="name">Lead Name</label>
+              <input id="name" type="text" placeholder="e.g. Sarah Chen" required />
+            </div>
+
+            <div class="field">
+              <label for="company">Company</label>
+              <input id="company" type="text" placeholder="e.g. Northstar Logistics" required />
+            </div>
+
+            <div class="field two">
+              <div class="field">
+                <label for="phone">Phone / Contact</label>
+                <input id="phone" type="text" placeholder="e.g. +1 555 987 2211" />
+              </div>
+              <div class="field">
+                <label for="stage">Stage</label>
+                <select id="stage" required></select>
+              </div>
+            </div>
+
+            <div class="field three">
+              <div class="field">
+                <label for="lastContact">Last Contact</label>
+                <input id="lastContact" type="date" />
+              </div>
+              <div class="field">
+                <label for="followUp">Next Follow-Up</label>
+                <input id="followUp" type="date" />
+              </div>
+              <div class="field">
+                <label for="reminderTime">Reminder Time</label>
+                <input id="reminderTime" type="time" value="09:00" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="notes">Call Notes / Next Step</label>
+              <textarea id="notes" placeholder="Summarize the call, objections, next action, budget notes, timeline..."></textarea>
+            </div>
+
+            <div class="actions">
+              <button type="submit" class="btn-primary" id="submitBtn">Save Lead</button>
+              <button type="button" class="btn-secondary" id="resetBtn">Clear Form</button>
+              <button type="button" class="btn-secondary" id="notifyBtn">Enable Notifications</button>
+              <button type="button" class="btn-secondary" id="signOutBtn" hidden>Sign out</button>
+            </div>
+
+            <div class="status warn" id="syncStatus" role="status" aria-live="polite">
+              Connecting to Supabase...
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="main-area">
+        <section class="panel reveal">
+          <div class="toolbar">
+            <div class="field">
+              <label for="search">Search</label>
+              <input id="search" type="text" placeholder="Search by name, company, phone, notes..." />
+            </div>
+            <div class="field">
+              <label for="filterStage">Filter Stage</label>
+              <select id="filterStage">
+                <option value="All">All Stages</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="sortBy">Sort By</label>
+              <select id="sortBy">
+                <option value="followUpAsc">Follow-Up: Earliest First</option>
+                <option value="followUpDesc">Follow-Up: Latest First</option>
+                <option value="lastContactDesc">Last Contact: Recent First</option>
+                <option value="nameAsc">Name: A to Z</option>
+              </select>
+            </div>
+            <button type="button" class="btn-secondary" id="refreshBtn">Refresh</button>
+          </div>
+
+          <div class="leads-wrap">
+            <div class="leads-head">
+              <div>Lead</div>
+              <div>Stage</div>
+              <div>Last Contact</div>
+              <div>Follow-Up</div>
+              <div>Notes</div>
+              <div>Actions</div>
+            </div>
+            <div class="lead-list" id="leadList"></div>
+          </div>
+        </section>
+
+        <section class="agenda">
+          <section class="panel agenda-block reveal">
+            <h3>Today & overdue</h3>
+            <p>Immediate follow-ups that need attention.</p>
+            <div class="mini-list" id="dueList"></div>
+          </section>
+
+          <section class="panel agenda-block reveal">
+            <h3>Upcoming follow-ups</h3>
+            <p>Your next few conversations, lined up and visible.</p>
+            <div class="mini-list" id="upcomingList"></div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <span>© 2026 <a href="https://github.com/samgfour" target="_blank" rel="noopener">Sam</a>. Free software under the <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL v3</a>, provided without warranty.</span>
+      <span>Keep the page open if you want browser reminders to fire.</span>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="config.js"></script>
+  <script>
+    "use strict";
+
+    const cfg = window.APP_CONFIG || {};
+    const $ = (id) => document.getElementById(id);
+
+    const STAGES = [
+      ["New", "stage-new"],
+      ["Contacted", "stage-contacted"],
+      ["Proposal Sent", "stage-proposal"],
+      ["Negotiation", "stage-negotiation"],
+      ["Won", "stage-won"],
+      ["Lost", "stage-lost"]
+    ];
+    const STAGE_CLASS = Object.fromEntries(STAGES);
+    const isClosed = (lead) => lead.stage === "Won" || lead.stage === "Lost";
+
+    const REMINDER_WINDOW_MS = 24 * 60 * 60 * 1000; // don't fire reminders more than a day late
+    const LOG_KEY = "salesTracker.reminderLog";
+    const REFETCH_AFTER_MS = 60 * 1000;
+
+    const form = $("leadForm");
+    const els = {
+      id: $("leadId"), name: $("name"), company: $("company"), phone: $("phone"),
+      stage: $("stage"), lastContact: $("lastContact"), followUp: $("followUp"),
+      reminderTime: $("reminderTime"), notes: $("notes")
+    };
+    const submitBtn = $("submitBtn"), resetBtn = $("resetBtn"), notifyBtn = $("notifyBtn");
+    const refreshBtn = $("refreshBtn"), signOutBtn = $("signOutBtn");
+    const syncStatus = $("syncStatus");
+    const searchInput = $("search"), filterStageInput = $("filterStage"), sortByInput = $("sortBy");
+    const leadList = $("leadList"), dueList = $("dueList"), upcomingList = $("upcomingList");
+    const authGate = $("authGate"), authForm = $("authForm"), authEmail = $("authEmail"), authStatus = $("authStatus");
+    const dashboard = document.querySelector("main.dashboard");
+
+    let db = null;
+    let leads = [];
+    let animateRows = true;
+    let lastFetch = 0;
+    let reminderLog = loadReminderLog();
+
+    /* ---------- helpers ---------- */
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+    }
+
+    function setStatus(message, type = "warn") {
+      syncStatus.className = `status ${type}`;
+      syncStatus.textContent = message;
+    }
+
+    function todayString() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    }
+
+    function formatDate(value) {
+      if (!value) return "—";
+      return new Date(value + "T00:00:00").toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+    }
+
+    function followUpStatus(dateStr) {
+      if (!dateStr) return "empty";
+      const today = todayString();
+      return dateStr < today ? "overdue" : dateStr === today ? "today" : "upcoming";
+    }
+
+    function loadReminderLog() {
+      try { return JSON.parse(localStorage.getItem(LOG_KEY)) || {}; } catch { return {}; }
+    }
+    function saveReminderLog() {
+      try { localStorage.setItem(LOG_KEY, JSON.stringify(reminderLog)); } catch {}
+    }
+
+    function notificationState() {
+      if (!("Notification" in window)) return "N/A";
+      return { granted: "On", denied: "Blocked" }[Notification.permission] || "Off";
+    }
+
+    /* ---------- form ---------- */
+
+    function fillStageOptions() {
+      const options = STAGES.map(([name]) => `<option value="${name}">${name}</option>`).join("");
+      els.stage.innerHTML = options;
+      filterStageInput.insertAdjacentHTML("beforeend", options);
+    }
+
+    function resetForm() {
+      form.reset();
+      els.id.value = "";
+      els.stage.value = "New";
+      els.reminderTime.value = "09:00";
+      submitBtn.textContent = "Save Lead";
+    }
+
+    function populateForm(lead) {
+      els.id.value = lead.id;
+      els.name.value = lead.name || "";
+      els.company.value = lead.company || "";
+      els.phone.value = lead.phone || "";
+      els.stage.value = lead.stage || "New";
+      els.lastContact.value = lead.last_contact || "";
+      els.followUp.value = lead.follow_up || "";
+      els.reminderTime.value = lead.reminder_time || "09:00";
+      els.notes.value = lead.notes || "";
+      submitBtn.textContent = "Update Lead";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      els.name.focus();
+    }
+
+    /* ---------- data ---------- */
+
+    async function fetchLeads() {
+      setStatus("Loading leads...", "warn");
+      try {
+        const { data, error } = await db.from("leads").select("*");
+        if (error) throw error;
+        leads = data || [];
+        lastFetch = Date.now();
+        render();
+        checkReminders();
+        setStatus(`Synced ${leads.length} lead${leads.length === 1 ? "" : "s"}.`, "ok");
+      } catch (error) {
+        setStatus(`Could not load leads: ${error.message}`, "error");
+      }
+    }
+
+    async function saveLead(lead) {
+      const { error } = await db.from("leads").upsert(lead, { onConflict: "id" });
+      if (error) throw error;
+    }
+
+    async function deleteLead(id) {
+      const { error } = await db.from("leads").delete().eq("id", id);
+      if (error) throw error;
+      delete reminderLog[id];
+      saveReminderLog();
+    }
+
+    /* ---------- rendering ---------- */
+
+    function getFilteredLeads() {
+      const query = searchInput.value.trim().toLowerCase();
+      const stage = filterStageInput.value;
+      const sortBy = sortByInput.value;
+      const key = (v, fallback) => v || fallback;
+
+      return leads
+        .filter((lead) => {
+          const haystack = [lead.name, lead.company, lead.phone, lead.stage, lead.notes].join(" ").toLowerCase();
+          return (!query || haystack.includes(query)) && (stage === "All" || lead.stage === stage);
+        })
+        .sort((a, b) => {
+          const aFollow = key(a.follow_up, "9999-12-31"), bFollow = key(b.follow_up, "9999-12-31");
+          switch (sortBy) {
+            case "followUpDesc": return bFollow.localeCompare(aFollow);
+            case "lastContactDesc": return key(b.last_contact, "").localeCompare(key(a.last_contact, ""));
+            case "nameAsc": return (a.name || "").localeCompare(b.name || "");
+            default: return aFollow.localeCompare(bFollow);
+          }
+        });
+    }
+
+    function renderLeads() {
+      const filtered = getFilteredLeads();
+
+      if (!filtered.length) {
+        leadList.innerHTML = `
+          <div class="empty-state">
+            <h3>No leads to show.</h3>
+            <p>${leads.length ? "Nothing matches your search or filter." : "Add your first lead using the form."}</p>
+          </div>`;
+        return;
+      }
+
+      leadList.innerHTML = filtered.map((lead, i) => `
+        <article class="lead-row${animateRows ? " enter" : ""}" style="animation-delay:${animateRows ? i * 45 : 0}ms">
+          <div class="lead-primary">
+            <div class="lead-name">${escapeHtml(lead.name)}</div>
+            <div class="lead-company">${escapeHtml(lead.company)}${lead.phone ? " • " + escapeHtml(lead.phone) : ""}</div>
+          </div>
+          <div><span class="pill ${STAGE_CLASS[lead.stage] || ""}">${escapeHtml(lead.stage)}</span></div>
+          <div class="date-chip ${lead.last_contact ? "" : "empty"}">${formatDate(lead.last_contact)}</div>
+          <div class="date-chip ${followUpStatus(lead.follow_up)}">
+            ${formatDate(lead.follow_up)}${lead.reminder_time ? ` • ${escapeHtml(lead.reminder_time)}` : ""}
+          </div>
+          <div class="lead-notes">${escapeHtml(lead.notes || "No notes yet.")}</div>
+          <div class="row-actions">
+            <button class="icon-btn" data-action="edit" data-id="${escapeHtml(lead.id)}" aria-label="Edit ${escapeHtml(lead.name)}">Edit</button>
+            <button class="icon-btn" data-action="delete" data-id="${escapeHtml(lead.id)}" aria-label="Delete ${escapeHtml(lead.name)}">Delete</button>
+          </div>
+        </article>`).join("");
+      animateRows = false;
+    }
+
+    function renderStats() {
+      const today = todayString();
+      const open = leads.filter((l) => !isClosed(l) && l.follow_up);
+      $("statTotal").textContent = leads.length;
+      $("statToday").textContent = open.filter((l) => l.follow_up === today).length;
+      $("statOverdue").textContent = open.filter((l) => l.follow_up < today).length;
+      $("statNotify").textContent = notificationState();
+    }
+
+    function miniItem(title, detail, tag) {
+      return `<div class="mini-item"><div><strong>${title}</strong><span>${detail}</span></div><div class="tag">${tag}</div></div>`;
+    }
+
+    function renderAgenda() {
+      const today = todayString();
+      const byFollowUp = (a, b) => a.follow_up.localeCompare(b.follow_up);
+      const open = leads.filter((l) => l.follow_up && !isClosed(l));
+      const timeOf = (l) => (l.reminder_time ? " • " + escapeHtml(l.reminder_time) : "");
+      const label = (l) => `${escapeHtml(l.name)} · ${escapeHtml(l.company)}`;
+
+      const due = open.filter((l) => l.follow_up <= today).sort(byFollowUp);
+      const upcoming = open.filter((l) => l.follow_up > today).sort(byFollowUp).slice(0, 6);
+
+      dueList.innerHTML = due.length
+        ? due.map((l) => miniItem(label(l),
+            `${formatDate(l.follow_up)}${timeOf(l)}${l.notes ? " • " + escapeHtml(l.notes.slice(0, 70)) : ""}`,
+            l.follow_up < today ? "Overdue" : "Today")).join("")
+        : miniItem("Nothing urgent", "No overdue or due-today follow-ups.", "Clear");
+
+      upcomingList.innerHTML = upcoming.length
+        ? upcoming.map((l) => miniItem(label(l), `${formatDate(l.follow_up)}${timeOf(l)} • ${escapeHtml(l.stage)}`, "Upcoming")).join("")
+        : miniItem("No upcoming follow-ups", "Schedule your next conversations to keep momentum.", "Plan");
+    }
+
+    function render() {
+      renderStats();
+      renderLeads();
+      renderAgenda();
+    }
+
+    /* ---------- notifications ---------- */
+
+    async function requestNotificationPermission() {
+      if (!("Notification" in window)) {
+        setStatus("This browser does not support notifications.", "warn");
+        return;
+      }
+      const result = await Notification.requestPermission();
+      renderStats();
+      if (result === "granted") setStatus("Notifications enabled. Keep this page open to receive reminders.", "ok");
+      else if (result === "denied") setStatus("Notifications are blocked. Allow them in your browser's site settings.", "warn");
+    }
+
+    function checkReminders() {
+      if (!("Notification" in window) || Notification.permission !== "granted") return;
+      const now = Date.now();
+      let changed = false;
+
+      for (const lead of leads) {
+        if (!lead.follow_up || !lead.reminder_time || isClosed(lead)) continue;
+        const dueAt = new Date(`${lead.follow_up}T${lead.reminder_time}:00`).getTime();
+        const reminderKey = `${lead.follow_up}_${lead.reminder_time}`;
+        if (isNaN(dueAt) || now < dueAt || now - dueAt > REMINDER_WINDOW_MS) continue;
+        if (reminderLog[lead.id] === reminderKey) continue;
+
+        try {
+          new Notification(`Follow up: ${lead.name}`, {
+            body: `${lead.company}${lead.phone ? " • " + lead.phone : ""}${lead.notes ? " • " + lead.notes.slice(0, 90) : ""}`,
+            tag: `followup-${lead.id}`
+          });
+        } catch {}
+        reminderLog[lead.id] = reminderKey;
+        changed = true;
+      }
+      if (changed) saveReminderLog();
+    }
+
+    /* ---------- events ---------- */
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const lead = {
+        id: els.id.value || crypto.randomUUID(),
+        name: els.name.value.trim(),
+        company: els.company.value.trim(),
+        phone: els.phone.value.trim() || null,
+        stage: els.stage.value,
+        last_contact: els.lastContact.value || null,
+        follow_up: els.followUp.value || null,
+        reminder_time: els.reminderTime.value || "09:00",
+        notes: els.notes.value.trim() || null
+      };
+      if (!lead.name || !lead.company) return;
+
+      submitBtn.disabled = true;
+      setStatus("Saving...", "warn");
+      try {
+        await saveLead(lead);
+        resetForm();
+        await fetchLeads();
+        setStatus("Lead saved.", "ok");
+      } catch (error) {
+        setStatus(`Save failed: ${error.message}`, "error");
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    leadList.addEventListener("click", async (e) => {
+      const btn = e.target.closest("button[data-action]");
+      if (!btn) return;
+      const lead = leads.find((item) => item.id === btn.dataset.id);
+      if (!lead) return;
+
+      if (btn.dataset.action === "edit") return populateForm(lead);
+
+      if (!confirm(`Delete ${lead.name}?`)) return;
+      setStatus("Deleting...", "warn");
+      try {
+        await deleteLead(lead.id);
+        await fetchLeads();
+        setStatus("Lead deleted.", "ok");
+      } catch (error) {
+        setStatus(`Delete failed: ${error.message}`, "error");
+      }
+    });
+
+    resetBtn.addEventListener("click", resetForm);
+    notifyBtn.addEventListener("click", requestNotificationPermission);
+    refreshBtn.addEventListener("click", fetchLeads);
+    searchInput.addEventListener("input", renderLeads);
+    [filterStageInput, sortByInput].forEach((el) => el.addEventListener("change", renderLeads));
+
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible" && db && !dashboard.hidden && Date.now() - lastFetch > REFETCH_AFTER_MS) fetchLeads();
+    });
+
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) { entry.target.classList.add("visible"); observer.unobserve(entry.target); }
+        });
+      }, { threshold: 0.12 });
+      document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+    } else {
+      document.querySelectorAll(".reveal").forEach((el) => el.classList.add("visible"));
+    }
+
+    /* ---------- auth (optional) ---------- */
+
+    function showApp(signedIn) {
+      dashboard.hidden = !signedIn;
+      authGate.hidden = signedIn;
+      $("stats").hidden = !signedIn;
+      signOutBtn.hidden = !(cfg.REQUIRE_AUTH && signedIn);
+      if (signedIn) fetchLeads();
+    }
+
+    async function initAuth() {
+      const { data } = await db.auth.getSession();
+      showApp(!!data.session);
+      db.auth.onAuthStateChange((event, session) => {
+        if (event === "SIGNED_IN" && !dashboard.hidden) return; // token refresh, already showing
+        if (event === "SIGNED_IN" || event === "SIGNED_OUT") { leads = []; showApp(!!session); }
+      });
+
+      authForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        authStatus.textContent = "Sending link...";
+        const { error } = await db.auth.signInWithOtp({
+          email: authEmail.value.trim(),
+          options: { emailRedirectTo: window.location.href.split("#")[0] }
+        });
+        authStatus.textContent = error ? `Could not send link: ${error.message}` : "Check your email for a sign-in link.";
+      });
+      signOutBtn.addEventListener("click", () => db.auth.signOut());
+    }
+
+    /* ---------- start ---------- */
+
+    fillStageOptions();
+    renderStats();
+    $("today").textContent = new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+
+    const configured = cfg.SUPABASE_URL && cfg.SUPABASE_ANON_KEY && !/PASTE_YOUR/.test(cfg.SUPABASE_URL + cfg.SUPABASE_ANON_KEY);
+
+    if (!window.supabase) {
+      setStatus("Could not load the Supabase library. Check your connection.", "error");
+    } else if (!configured) {
+      setStatus("Copy config.example.js to config.js and add your Supabase URL and anon key.", "error");
+    } else {
+      db = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
+      if (cfg.REQUIRE_AUTH) initAuth(); else fetchLeads();
+    }
+
+    setInterval(checkReminders, 30000);
+  </script>
+</body>
+</html>
